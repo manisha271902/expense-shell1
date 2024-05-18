@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e 
+
+
 USERID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
@@ -20,12 +23,10 @@ check_root(){
 }
 
 
-VALIDATE(){
-    if [ $1 -ne 0 ]
-    then
-        echo -e  "$2 ....$R FAILED $N"
-        exit 1
-    else
-        echo -e "$2..... $G SUCCESS $N"
-    fi
+failure()
+{
+    
+echo "Failed at line number $1: error command is $2"
+    
 }
+trap 'failure ${LINENO} "$BASH_COMMAND"' ERR

@@ -1,38 +1,24 @@
 #!/bin/bash
+
+
 source ./common.sh
 
 check_root
+
+
 echo "ENter DB password"
 read -s db_pswd   #kindha configure chesina root pasword eh ikada use cheyali
 
 
-if [ $USERID -ne 0 ]
-then    
-    echo -e "$R Please run with root user $N"
-else
-    echo -e "$G You are a super user $N"
-fi
-
-
-VALIDATE(){
-    if [ $1 -eq 0 ]
-    then
-        echo -e " $2 ... $G SUCCESS $N"
-    else
-        echo -e " $2 ... $R FAILED $N"
-        exit 1
-    fi
-
-}
 
 dnf install mysql-server -y  &>>$LOG_FILE
-VALIDATE $? "Installing MYSQL"
+# VALIDATE $? "Installing MYSQL"
 
 systemctl enable mysqld  &>>$LOG_FILE
-VALIDATE $? "Enabling mysql" 
+# VALIDATE $? "Enabling mysql" 
 
 systemctl start mysqld  &>>$LOG_FILE
-VALIDATE $? "starting mysql" 
+# VALIDATE $? "starting mysql" 
 
 
 # mysql_secure_installation --set-root-pass cherry123 &>>$LOG_FILE   
@@ -44,6 +30,7 @@ mysql -h db.manisha.fun -uroot -p${db_pswd} -e "show databases;" &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
     mysql_secure_installation --set-root-pass db_pswd &>>$LOG_FILE
+    VALIDATE $? "MySQL Root password setup"
 else
     echo -e "mysql root password is already setup, so $Y skipping $N"
 fi
